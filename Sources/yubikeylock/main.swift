@@ -10,6 +10,13 @@ import AppKit
 import IOKit
 import IOKit.usb
 
+let defaultsDomain = "com.github.zerok.yubikeylock"
+let defaultsDeviceNameKey = "matcher.devicename"
+let defaultsDeviceNameDefault = "Yubikey"
+
+let defaults = UserDefaults.init(suiteName: defaultsDomain)!
+defaults.register(defaults: [defaultsDeviceNameKey: defaultsDeviceNameDefault])
+
 let disconnectedNotification = Notification(name: Notification.Name("yubikeyDisconnected"))
 let connectedNotification = Notification(name: Notification.Name("yubikeyConnected"))
 
@@ -73,7 +80,8 @@ class SleepObserver {
                 break
             }
             let deviceName = getDeviceName(device)
-            if deviceName.hasPrefix("Yubikey") {
+            let prefix: String = defaults.string(forKey: defaultsDeviceNameKey)!
+            if deviceName.hasPrefix(prefix) {
                 return true
             }
         };
